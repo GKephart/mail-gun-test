@@ -46,7 +46,7 @@ try {
 
 // Now, compose and send your message.
 // $mg->messages()->send($domain, $params);
-	$mg->messages()->send('example.com', [
+	$mg->messages()->send($mailgunDomain, [
 		'from'    => 'gkephart@cnm.edu',
 		'to'      => 'g.e.kephart@gmail.com',
 		'subject' => 'The PHP SDK is awesome!',

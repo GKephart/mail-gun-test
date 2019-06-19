@@ -5,7 +5,8 @@
  *
  * @param string $siteKey your public reCAPTCHA API key
  * @param string $secret your secret reCAPTCHA API key
- * @param string $mailgunApiKey your mail gun private api key.
+ * @param string $mailgunDomain your mailgun private api key.
+ * @param string $mailgunApiKey your mailgun domain relay.
  * @param array $MAIL_RECIPIENTS array of email addresses and corresponding recipient names to send form responses to
  *
  * @author Rochelle Lewis <rlewis37@cnm.edu>
@@ -16,6 +17,7 @@
 //mailgun API Key authorization
 
 $mailgunApiKey = "-- MAILGUN API KEY --";
+$mailgunDomain = " --MAILGUN DOMAIN NAME --";
 
 
 // your Google reCAPTCHA keys here
