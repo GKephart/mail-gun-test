@@ -4,8 +4,5 @@
     "mailgun/mailgun-php": "@stable",
     "kriswallsmith/buzz": "@stable",
     "nyholm/psr7": "@stable"
-
-
-
   }
 }
