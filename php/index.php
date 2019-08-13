@@ -40,23 +40,59 @@ try {
 	$subject = filter_input(INPUT_POST, "subject", FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 	$message = filter_input(INPUT_POST, "message", FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 
-	// First, instantiate the SDK with your API credentials
-	$mg = Mailgun::create($mailgunApiKey); // For US servers
 
 
-// Now, compose and send your message.
-// $mg->messages()->send($domain, $params);
-	$mg->messages()->send($mailgunDomain, [
-		'from'    => $email,
-		'to'      => $MAIL_RECIPIENTS["email"],
-		'subject' => $subject,
-		'text'    => $message
-	]);
+
+	// create Swift message
+	$swiftMessage = new Swift_Message();
+	/**
+	 * Attach the sender to the message.
+	 * This takes the form of an associative array where $email is the key for the real name.
+	 **/
+	$swiftMessage->setFrom([$email => $name]);
+	/**
+	 * Attach the recipients to the message.
+	 * $MAIL_RECIPIENTS is set in mail-config.php
+	 **/
+	$recipients = $MAIL_RECIPIENTS;
+	$swiftMessage->setTo($recipients);
+	// attach the subject line to the message
+	$swiftMessage->setSubject($subject);
+	/**
+	 * Attach the actual message to the message.
+	 *
+	 * Here we set two versions of the message: the HTML formatted message and a
+	 * special filter_var()'d version of the message that generates a plain text
+	 * version of the HTML content.
+	 *
+	 * Notice one tactic used is to display the entire $confirmLink to plain text;
+	 * this lets users who aren't viewing HTML content in Emails still access your
+	 * links.
+	 **/
+	$swiftMessage->setBody($message, "text/html");
+	$swiftMessage->addPart(html_entity_decode($message), "text/plain");
+
+	var_dump($swiftMessage);
+
+	/**
+	 * Send the Email via the Mailgun API. The Mailgun API will handle the actual sending of the email.
+	 * Another option is to use smtp to have your server to send the email. This requires setting up an email server.
+	 * With containerized solutions it is easier to have a third party handle the actual  sending of email.
+	 *
+	 * The $mailgunApiKey and $mailgunDomain is set in mail-config.php
+	 */
+
+	//Instantiate the mailgun api with your API credentials
+	$mailgun = Mailgun::create($mailgunApiKey);
+
+	//configure the mailgun object and send the email
+	$mailgun->messages()->sendMime($mailgunDomain, $MAIL_RECIPIENT, $swiftMessage->toString(), []);
+
 
 
 	// report a successful send!
 	echo "<div class=\"alert alert-success\" role=\"alert\">Email successfully sent.</div>";
 
 } catch(Exception $exception) {
-	echo "<div class=\"alert alert-danger\" role=\"alert\"><strong>Oh snap!</strong> Unable to send email: " . $exception->getMessage() . "</div>";
+	echo "<div class=\"alert alert-danger\" role=\"alert\"><strong>Oh snap!</strong> Unable to send email: " . $exception->getMessage() . " " . $exception->getFile() . "</div>";
 }
