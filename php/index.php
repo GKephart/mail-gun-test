@@ -72,8 +72,6 @@ try {
 	$swiftMessage->setBody($message, "text/html");
 	$swiftMessage->addPart(html_entity_decode($message), "text/plain");
 
-	var_dump($swiftMessage);
-
 	/**
 	 * Send the Email via the Mailgun API. The Mailgun API will handle the actual sending of the email.
 	 * Another option is to use smtp to have your server to send the email. This requires setting up an email server.
